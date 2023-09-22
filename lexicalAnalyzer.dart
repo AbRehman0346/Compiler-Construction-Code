@@ -4,7 +4,16 @@
 * */
 
 void main() {
-  print(tokenize('String s = "Abdul "Rehman"'));
+  print("Success: ${tokenize('String s;')}");
+  print("Success: ${tokenize('String s = "Abdul Rehman";')}");
+  print("Success: ${tokenize('int i = 30;')}");
+  print("Success: ${tokenize('float j = 40.0;')}");
+  print("Success: ${tokenize('float j = 45;')}");
+
+  // The below print statement line doesn't contain the valid statement so the program will throw an error
+  // As it should. There is one comma extra so it can't be tokanized...So it will throw an error to user.
+  // Thanks...
+  // print(tokenize('String s = "Abdul" Rehman";'));
 }
 
 List<Map> tokenize(String stmt) {
@@ -36,6 +45,8 @@ List<Map> tokenize(String stmt) {
 }
 
 List<String> createTokens(String stmt) {
+  Punction pun = Punction();
+  Operator op = Operator();
   List<String> tokens = [];
   stmt = stmt.trim();
   String word = "";
@@ -55,10 +66,24 @@ List<String> createTokens(String stmt) {
       continue;
     }
 
+    // Identifies Punctions that are without spaces
+    if (pun.isPunction(stmt[i])) {
+      tokens.add(stmt[i]);
+      continue;
+    }
+
+    //Checking for Operators
+    if (op.isOperator(stmt[i])) {
+      tokens.add(stmt[i]);
+      continue;
+    }
+
     // Identifies the Int Value;
     if (stmt[i] == " ") {
-      tokens.add(word);
-      word = "";
+      if (word != "") {
+        tokens.add(word);
+        word = "";
+      }
     } else {
       word += stmt[i];
     }
@@ -138,6 +163,10 @@ class Operator {
     operator.add(sub);
     operator.add(multiply);
     operator.add(divide);
+  }
+
+  void displayOperators() {
+    print(operator);
   }
 
   bool isOperator(String s) {
